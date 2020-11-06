@@ -81,8 +81,8 @@ class Recorder():
 
             if self.complete:
 
-                np.savetxt('./' + self.name +'.csv', self.record_stream, delimiter = ',')   
-                write('./' + self.name +'.wav', self.fs, self.record_stream)    
+                np.savetxt('./data/' + self.name +'.csv', self.record_stream, delimiter = ',')   
+                write('./data/' + self.name +'.wav', self.fs, self.record_stream)    
 
             self.screen.quit()
 
@@ -91,6 +91,8 @@ class Recorder():
             self.screen.mainloop()
             
 if __name__ == '__main__':
+
+    # Run a recording session
     
     ui = Recorder()
 
