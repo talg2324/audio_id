@@ -1,19 +1,13 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io.wavfile import write
-import time
-import pandas as pd
 import sounddevice as sd
-from scipy.io.wavfile import write
 import tkinter as tk
+import os
 
 class Recorder():
-        def __init__(self):
-
-            # Init params
-            start_name = ''
-            start_channel = 1
-            start_fs = 8000    #Hz
+    
+        def __init__(self, start_name='', start_channel=1, start_fs=8000):
 
             self.fs = start_fs
             self.channel = start_channel
@@ -62,7 +56,7 @@ class Recorder():
 
         def start_record(self):
             
-            self.rec = sd.InputStream(samplerate=self.fs, channels=self.channel, blocksize=self.fs, callback=self.record_block)
+            self.rec = sd.InputStream(samplerate=self.fs, channels=self.channel, blocksize=self.fs//2, callback=self.record_block)
             self.rec.start()
 
         def end_record(self):
@@ -81,10 +75,21 @@ class Recorder():
 
             if self.complete:
 
+                if not os.path.exists('./data/'):
+
+                    os.makedirs('./data/')
+
                 np.savetxt('./data/' + self.name +'.csv', self.record_stream, delimiter = ',')   
                 write('./data/' + self.name +'.wav', self.fs, self.record_stream)    
 
             self.screen.quit()
+
+            plt.plot(self.record_stream)
+            plt.xticks(np.arange(0,len(self.record_stream), self.fs), labels=np.arange(0,len(self.record_stream)/self.fs))
+            plt.title('Thanks for your help, send us your data!')
+            plt.xlabel('time [sec]')
+            plt.ylabel('Amplitude')
+            plt.show()
 
         def run(self):
 
