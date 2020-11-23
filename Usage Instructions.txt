@@ -1,0 +1,51 @@
+Data Acquisition GUI - EXE Usage Instructions
+
+______________________________________________________
+
+1) In the data_acq_gui folder, find and run (click) the executable file data_acq_gui.exe
+
+2) Enter your *full name* and a random number.  Don't worry, this will be anonymized.
+
+3) Prepare to record your voice.  You'll have to read the following sentence:
+
+צפע חזק נשך דג מת באוסטרליה
+
+4) Hit "Start Recording" and read the sentence.  When you're done click "End Recording".
+
+Change the number after your name and perform the recording again.
+Before recording a final time, change the number once more.
+
+5) A new folder named "data" should appear in the same folder as the data_acq_gui.exe file.
+Check to see your recordings.
+
+6) After repeating three times, send us your CSV files
+
+Thanks for your help!
+
+Tal, Yariv, Shai
+
+Data Acquisition GUI - Python Usage Instructions
+
+______________________________________________________
+
+1) Run data_acq_gui.py
+
+2) Enter your *full name* and a random number.  Don't worry, this will be anonymized.
+
+3) Prepare to record your voice.  You'll have to read the following sentence:
+
+צפע חזק נשך דג מת באוסטרליה
+
+4) Hit "Start Recording" and read the sentence.  When you're done click "End Recording".
+
+Change the number after your name and perform the recording again.
+Before recording a final time, change the number once more.
+
+5) A new folder named "data" should appear in the same folder as the data_acq_gui.py file.
+Check to see your recordings.
+
+6) After repeating three times, send us your CSV files
+
+Thanks for your help!
+
+Tal, Yariv, Shai

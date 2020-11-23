@@ -1,6 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.io.wavfile import write
 import sounddevice as sd
 import tkinter as tk
 import os
@@ -47,7 +46,7 @@ class Recorder():
             end_rec_button.grid( row = 3 , column = 2)
 
 
-            quit_button = tk.Button(self.screen, text="Quit",width=10, command= self.finish_session)
+            quit_button = tk.Button(self.screen, text="Quit",width=10, command=self.screen.quit)
             quit_button.grid( row = 3 , column = 3)
 
         def record_block(self, indata, frames, time, status):
@@ -60,12 +59,14 @@ class Recorder():
             self.rec.start()
 
         def end_record(self):
-            
+
             self.rec.stop()
-
             self.record_stream = np.array(self.record_stream).flatten()
-
             self.complete = True
+
+            self.finish_session()
+            self.show_session()
+
 
         def finish_session(self):
 
@@ -80,12 +81,15 @@ class Recorder():
                     os.makedirs('./data/')
 
                 np.savetxt('./data/' + self.name +'.csv', self.record_stream, delimiter = ',')   
-                write('./data/' + self.name +'.wav', self.fs, self.record_stream)    
 
-            self.screen.quit()
+            self.last = np.copy(self.record_stream)
+            self.record_stream = []
+            self.complete = False
 
-            plt.plot(self.record_stream)
-            plt.xticks(np.arange(0,len(self.record_stream), self.fs), labels=np.arange(0,len(self.record_stream)/self.fs))
+        def show_session(self):
+
+            plt.plot(self.last)
+            plt.xticks(np.arange(0,len(self.last), self.fs), labels=np.arange(0,len(self.last)/self.fs))
             plt.title('Thanks for your help, send us your data!')
             plt.xlabel('time [sec]')
             plt.ylabel('Amplitude')
