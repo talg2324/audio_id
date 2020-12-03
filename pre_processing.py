@@ -6,10 +6,9 @@ import matplotlib.pyplot as plt
 
 class Pre_processing() :
 
-    def __init__(self,data,sr ,n_mel_coeff,frame_length = 2048 ,hop_length = 512, n_fft = 2048 , window = 'hann' ):
+    def __init__(self,data, sr ,n_mel_coeff, frame_length = 2048 ,hop_length = 512, n_fft = 2048 , window = 'hann' ):
 
         self.raw_data  = data
-        self.labels = data.columns
         self.data = self.raw_data.to_numpy().T
         self.data = self.data.flatten()
 
@@ -107,8 +106,6 @@ class Pre_processing() :
 
         fig.colorbar(img, ax=_ax, format="%+2.f dB")
         plt.show()
-
-        
 
         return
     

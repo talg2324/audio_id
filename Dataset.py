@@ -1,17 +1,41 @@
 import pandas as pd
 import numpy as np 
-import pickle
 
-xls_Data = pd.read_excel(r"C:\Users\USER\Code_Bank\audio_id\data\Example_Dataset.xlsx"
-    ,header=None,sheet_name=None)
-Data = {}
+def get_data():
 
-for key, value in xls_Data.items():              
-    sheet = value.dropna()                                          #drop Nan's from every sheet
-    Data[key] = sheet
+    data = {}
 
-pickle_out = open('Dataset.pickle', 'wb')
-pickle.dump(Data, pickle_out)
-pickle_out.close()
+    xls = pd.ExcelFile('./data/Example_Dataset.xlsx')
 
+    for sheet_name in xls.sheet_names:
+        sheet = xls.parse(sheet_name).dropna()
+        data[sheet_name] = sheet
 
+    return data
+
+#SHAI
+def append_user():
+
+    xls = pd.ExcelFile('./data/Example_Dataset.xlsx')
+    new_user = pd.read_csv('./data/talg.csv')
+    # If new user not in xls -> make new sheet
+    # Sheet names should be anonymous-> use import uuid
+
+#SHAI
+def crop_data(signal, desired_length):
+
+    return
+#SHAI
+def pickle_data():
+
+    data = get_data()
+
+    # Turn to pickle
+
+    return
+#SHAI
+def unpickle_data():
+
+    # Read data
+
+    return #data
