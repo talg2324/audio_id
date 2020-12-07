@@ -32,28 +32,53 @@ def register_new_user(user_path,dataset_path):
 
     return dataset_dict
 
-def crop_data(dataset_path, time_interval):
-    # input - xlsx dataset file and time_interval that is wanted to crop
+def crop_data(dataset_path, time_interval, fs):
+    # input - xlsx dataset file and time_interval(classic -0.5 sec) that is wanted to crop
     # output - dict of ('user_name':cropped Dataframe)
-
     data = get_data(dataset_path)
+    cropped_data = data
 
-    f = 800                            #[Hz]
-    time_int = time_interval                      #[sec]
-    samples = time_int*f
-    for key, value in data.items():
-        rec_size = value.shape[0]      # record size
-        if rec_size < 20*f :
-            del data[key]
+    seg_size = int(round(time_interval * fs))  # segment size in samples
+    for key, df in list(data.items()):
+        rec_size = df.shape[0]      # record size
+        if rec_size < 20*fs :
+            del cropped_data[key]
         else :
-            samp2crop = round((rec_size - samples)/2)
-            index1 = list(range(samp2crop))  ; index2 = list(range(rec_size-samp2crop, rec_size)) ; 
-            index = index1 + index2
-            new_value = value.drop(index)
-            data[key] = new_value
+            norm_df= -1 +2*(df-df.min())/(df.max()-df.min())  # normlize[-1 1]
+            signal = np.asarray(norm_df).transpose()[0]
+            signal_len = len(signal)
+            # Break signal into list of segments
+            segments = np.array([signal[x:x + seg_size] for x in np.arange(0, signal_len, seg_size)])
+            # Remove low energy segments:
+            energies = [(s**2).sum() / len(s) for s in segments]
+            thresh = min(energies)+0.25*(max(energies)-min(energies))
+            high_energy = (np.where(energies > thresh)[0])
+            segments2 = segments[high_energy]
+            # concatenate segments to signal:
+            cropped_signal = np.concatenate(segments2)
 
-    return data
+            # trim silence with librosa
+            #trim = librosa.effects.trim(cropped_signal, top_db=0.9, 
+            #frame_length=int(round(seg_size/10)), hop_length=50)
+            #new_signal_trim = trim[0]
+            # plots!!
+            #i = 1
+            #plt.figure(i)
+            #plt.plot(signal)
+            #plt.figure(i+1)
+            #plt.plot(new_signal)
+            #plt.figure(i+2)
+            #plt.plot(cropped_signal)
+            #plt.show()
+            #i +=3
 
-    a = 8
-    y = 6
+            ## check if cropped data is at least 5 sec and crop the first 5 sec
+            min_time = 5*fs
+            if len(cropped_signal) > min_time:
+                cropped_data[key] = pd.DataFrame(data=cropped_signal[0:min_time])
+            else:
+                del cropped_data[key]
+
+    return cropped_data
+
     
