@@ -1,3 +1,6 @@
+______________________________________________________
+
+
 Data Acquisition GUI - EXE Usage Instructions
 
 ______________________________________________________
@@ -10,19 +13,24 @@ ______________________________________________________
 
 צפע חזק נשך דג מת באוסטרליה
 
-4) Hit "Start Recording" and read the sentence.  When you're done click "End Recording".
+4) Hit "Start Recording" and wait ~15 seconds.
+
+5) Read the sentence, then wait another ~15 seconds.  When you're done click "End Recording".
 
 Change the number after your name and perform the recording again.
 Before recording a final time, change the number once more.
 
-5) A new folder named "data" should appear in the same folder as the data_acq_gui.exe file.
+6) A new folder named "data" should appear in the same folder as the data_acq_gui.exe file.
 Check to see your recordings.
 
-6) After repeating three times, send us your CSV files
+7) After repeating ten times, send us your CSV files
 
 Thanks for your help!
 
 Tal, Yariv, Shai
+
+______________________________________________________
+
 
 Data Acquisition GUI - Python Usage Instructions
 
@@ -36,15 +44,17 @@ ______________________________________________________
 
 צפע חזק נשך דג מת באוסטרליה
 
-4) Hit "Start Recording" and read the sentence.  When you're done click "End Recording".
+4) Hit "Start Recording" and wait ~15 seconds.
+
+5) Read the sentence, then wait another ~15 seconds.  When you're done click "End Recording".
 
 Change the number after your name and perform the recording again.
 Before recording a final time, change the number once more.
 
-5) A new folder named "data" should appear in the same folder as the data_acq_gui.py file.
+6) A new folder named "data" should appear in the same folder as the data_acq_gui.py file.
 Check to see your recordings.
 
-6) After repeating three times, send us your CSV files
+7) After repeating ten times, send us your CSV files
 
 Thanks for your help!
 
