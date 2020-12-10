@@ -8,19 +8,14 @@ class Pre_processing() :
 
     def __init__(self,data, sr, n_mel_coeff, frame_length = 2048 ,hop_length = 512, n_fft = 2048 , window = 'hann' ):
 
-        self.raw_data  = data
-        self.data = self.raw_data.to_numpy().T
-        self.data = self.data.flatten()
-
-        self.signal_length = len(self.data)
         self.sr = int(sr) 
-        self.frame_length = int(frame_length)
-        self.hop_length = int(hop_length)
-        self.n_fft = int(n_fft)
-        self.window = window
+        self.frame_length = 2048
+        self.hop_length = 512
+        self.n_fft = 2048 
+        self.window = 'hann' 
         self.n_mel_coeff = int(n_mel_coeff)
         
-    def stats(self) :
+    def stats(self,x) :
 
         fetures = [
             'spectral_centroid',
@@ -28,33 +23,33 @@ class Pre_processing() :
             'rms',
             'zero_crossing_rate'
             ]
-        spectral_centroid = librosa.feature.spectral_centroid(self.data,sr = self.sr ,n_fft =self.n_fft, hop_length = self.hop_length ,window=self.window, center=True )
+        spectral_centroid = librosa.feature.spectral_centroid(x,sr = self.sr ,n_fft =self.n_fft, hop_length = self.hop_length ,window=self.window, center=True )
         spectral_centroid = spectral_centroid.flatten()
 
-        spectral_bandwith = librosa.feature.spectral_bandwidth(self.data,sr = self.sr ,n_fft =self.n_fft, hop_length = self.hop_length ,window=self.window, center=True , p = 2)
+        spectral_bandwith = librosa.feature.spectral_bandwidth(x,sr = self.sr ,n_fft =self.n_fft, hop_length = self.hop_length ,window=self.window, center=True , p = 2)
         spectral_bandwith = spectral_bandwith.flatten()
 
-        rms = librosa.feature.rms(self.data, frame_length = self.frame_length, hop_length = self.hop_length, center = True )
+        rms = librosa.feature.rms(x, frame_length = self.frame_length, hop_length = self.hop_length, center = True )
         rms = rms.flatten()
 
-        zero_crossing_rate = librosa.feature.zero_crossing_rate(self.data ,frame_length = self.frame_length ,hop_length=self.hop_length ,center=True)
+        zero_crossing_rate = librosa.feature.zero_crossing_rate(x ,frame_length = self.frame_length ,hop_length=self.hop_length ,center=True)
         zero_crossing_rate =zero_crossing_rate.flatten()
 
         stats_array = librosa.util.stack([spectral_centroid ,spectral_bandwith, rms, zero_crossing_rate], axis = 0)
 
         return fetures , stats_array
 
-    def stft(self) :
+    def stft(self,x) :
 
-        return librosa.stft(self.data, n_fft = self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True)
+        return librosa.stft(x, n_fft = self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True)
 
     def istft(self,x) :
 
         return librosa.istft(x, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True)
     
-    def mel_coeff(self,num_of_derivatives) :
+    def mel_coeff(self,x,num_of_derivatives) :
 
-        _mel_coeff = librosa.feature.mfcc(self.data, sr= self.sr, n_mfcc= self.n_mel_coeff, dct_type=2, norm='ortho')
+        _mel_coeff = librosa.feature.mfcc(x, sr= self.sr, n_mfcc= self.n_mel_coeff, dct_type=2, norm='ortho')
 
         if num_of_derivatives > 0 :
 
@@ -70,27 +65,27 @@ class Pre_processing() :
 
             return _mel_coeff
 
-    def mel_spect(self,power_2_db = False) :
+    def mel_spect(self,x,power_2_db = False) :
 
         if power_2_db :
             
-            mel_spec =  librosa.feature.melspectrogram(self.data, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
+            mel_spec =  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
             mel_spec = librosa.power_to_db(mel_spec, ref =np.max)
 
             return mel_spec
 
         else :
 
-            return  librosa.feature.melspectrogram(self.data, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
+            return  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
     
-    def mel_spec_deriv(self, mel) :
+    def mel_spec_deriv(self, x) :
 
-        return librosa.feature.delta(mel, width = mel.shape[-1] ,order = 1,mode = 'interp')
+        return librosa.feature.delta(x, width = x.shape[-1] ,order = 1,mode = 'interp')
 
-    def show_time_plot(self) :
+    def show_time_plot(self,x) :
 
         _ax = plt.gca()
-        librosa.display.waveplot(self.data, sr=self.sr ,x_axis='time', ax= _ax)
+        librosa.display.waveplot(x, sr=self.sr ,x_axis='time', ax= _ax)
         _ax.set(title = 'Audio signal')
 
         plt.show()
@@ -107,19 +102,41 @@ class Pre_processing() :
         fig.colorbar(img, ax=_ax, format="%+2.f dB")
         plt.show()
 
+        
+
         return
     
+    def my_dict(self,data) :
 
-         
+        data = data.to_numpy().T
+        data = data.flatten()
+
+        mel = self.mel_spect(data,power_2_db= True)
+        mel_dev_1 = self.mel_spec_deriv(mel)
+        mel_dev_2 =self.mel_spec_deriv(mel_dev_1)
+
+        features_dict = {
+            'statistic_features' : self.stats(data),
+            'stft' : self.stft(data),
+            'mel_coeff' : self.mel_coeff(data,2),
+            'mel_spec' : mel ,
+            'mel_spec_dev_1' : mel_dev_1 ,
+            'mel_spec_dev_2' : mel_dev_2 
+        }
+
+        return features_dict
+    
 
 if __name__ == '__main__' :
 
     data_file = './data/yaya.csv'
     signal = pd.read_csv(data_file)
-    audio_model = Pre_processing(signal,8000,10)
+    _sr = 8000
+    _mel_coeff = 10
+    audio_model = Pre_processing(_sr,_mel_coeff)
             
-    a = audio_model.mel_spect(power_2_db = True)
-    audio_model.show_spec(a ,_x_axis = 'time', scale = 'log', spec_name = 'yariv')
+    a = audio_model.my_dict(signal)
+    audio_model.show_spec(a.get('mel_spec_dev_1') ,_x_axis = 'time', scale = 'log', spec_name = 'yariv')
     
     print(1)
     
