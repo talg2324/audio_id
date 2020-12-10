@@ -13,21 +13,22 @@ def main():
 def perform_preprocessing():
 
     feature_space = './data/feats/'
+    data_path = './data/Example_Dataset.xlsx'
 
     # If haven't calculated features, do it
     if not len(os.listdir(feature_space)):
         num_mel_coeffs = 10
         fs = 8000
-        df = Dataset.get_data()
+        df = Dataset.get_data(data_path)
+        audio_model = Pre_processing(fs, num_mel_coeffs)
 
         for key, val in df.items():
             signals = df[key]
 
             for col in range(signals.shape[1]): 
                 S = signals.iloc[1:,col]
-                audio_model = Pre_processing(S, fs, num_mel_coeffs)
 
-                spect = audio_model.mel_spect(power_2_db = True)
+                spect = audio_model.mel_spect(S.to_numpy(), power_2_db = True)
                 
                 path_to_feat = feature_space + key + '_' + str(col) + '.npy'
                 np.save(path_to_feat, spect)

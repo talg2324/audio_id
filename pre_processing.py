@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 class Pre_processing() :
 
-    def __init__(self,data, sr, n_mel_coeff, frame_length = 2048 ,hop_length = 512, n_fft = 2048 , window = 'hann' ):
+    def __init__(self, sr, n_mel_coeff):
 
         self.sr = int(sr) 
         self.frame_length = 2048
