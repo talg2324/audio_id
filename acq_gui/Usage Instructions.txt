@@ -12,10 +12,19 @@ ______________________________________________________
 3) Prepare to record your voice.  You'll have to read the following sentence:
 
 צפע חזק נשך דג מת באוסטרליה
+השפן טעם ביס ואכל קצת גזר חד
+הזר שטיגן תפוד בכלא צעק חמס
+עוגיפלצת אכן סחט שקד מזברה
+הקצין גד חזר ותבע כיסא למשפט
+קזחסטן ארץ מעלפת, גדושה בכי
+שפן אכל קצת גזר בטעם חסה, ודי
+דג סקרן שט לו בים זך, אך לפתע פגש חבורה נחמדה שצצה כך
 
-4) Hit "Start Recording" and wait ~15 seconds.
 
-5) Read the sentence, then wait another ~15 seconds.  When you're done click "End Recording".
+
+4) Hit "Start Recording" and wait ~3 seconds.
+
+5) Read the sentence, then wait another ~3 seconds.  When you're done click "End Recording".
 
 Change the number after your name and perform the recording again.
 Before recording a final time, change the number once more.
@@ -23,7 +32,7 @@ Before recording a final time, change the number once more.
 6) A new folder named "data" should appear in the same folder as the data_acq_gui.exe file.
 Check to see your recordings.
 
-7) After repeating ten times, send us your CSV files
+7) After repeating TEN times, send us your CSV files
 
 Thanks for your help!
 
@@ -43,10 +52,18 @@ ______________________________________________________
 3) Prepare to record your voice.  You'll have to read the following sentence:
 
 צפע חזק נשך דג מת באוסטרליה
+השפן טעם ביס ואכל קצת גזר חד
+הזר שטיגן תפוד בכלא צעק חמס
+עוגיפלצת אכן סחט שקד מזברה
+הקצין גד חזר ותבע כיסא למשפט
+קזחסטן ארץ מעלפת, גדושה בכי
+שפן אכל קצת גזר בטעם חסה, ודי
+דג סקרן שט לו בים זך, אך לפתע פגש חבורה נחמדה שצצה כך
 
-4) Hit "Start Recording" and wait ~15 seconds.
 
-5) Read the sentence, then wait another ~15 seconds.  When you're done click "End Recording".
+4) Hit "Start Recording" and wait ~3 seconds.
+
+5) Read the sentence, then wait another ~3 seconds.  When you're done click "End Recording".
 
 Change the number after your name and perform the recording again.
 Before recording a final time, change the number once more.
@@ -54,7 +71,7 @@ Before recording a final time, change the number once more.
 6) A new folder named "data" should appear in the same folder as the data_acq_gui.py file.
 Check to see your recordings.
 
-7) After repeating ten times, send us your CSV files
+7) After repeating TEN times, send us your CSV files
 
 Thanks for your help!
 
