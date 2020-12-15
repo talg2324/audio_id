@@ -15,70 +15,88 @@ def get_data(path):
 
     return data
 
-#SHAI
-def register_new_user(user_path,dataset_path):
-    # input  - user_path = csv file of the audio recording
-    #        - dataset_path = excel_file of the dataset
-    # output - datasetset_dict as a dict of ('user_name':pd.Dataframe)
+def loop_register_users(data_path):
 
-    dataset_dict = get_data(dataset_path)
-    new_user = pd.read_csv(user_path,header=None)
-    # If new user not in xls -> make new sheet
-    name_of_user = os.path.splitext(os.path.split(user_path)[1])[0]
+    all_files = os.listdir(data_path)
 
-#names = 
-    if name_of_user not in list(dataset_dict.keys()):
-        dataset_dict[name_of_user] = new_user.dropna()
+    csv = [f for f in all_files if f.endswith('.csv')]
+    users = {}
+    num_files = {}
 
-    return dataset_dict
+    for c in csv:
+        user_name = ''.join([i for i in c if not i.isnumeric()])
+        user_name = user_name.rstrip('.csv')
 
-def crop_data(dataset_path, time_interval, fs):
+        df = pd.read_csv(data_path+c)
+
+        try:
+            df = crop_data(df, time_interval=3, fs=8000)
+            if user_name not in users.keys():
+                users[user_name] = df
+                num_files[user_name] = 1
+            else:
+                user_df = users[user_name]
+                num_files[user_name] += 1
+                user_df[num_files[user_name]] = df
+
+        except Exception as e:
+            print("Bad file:" + c)
+            print(e)
+
+    with pd.ExcelWriter(data_path+'database.xlsx') as writer:
+        for key in users.keys():
+            df = users[key]
+            df.to_excel(writer, sheet_name= key)
+    return
+
+    
+    # with pd.ExcelWriter(database_path) as writer:
+    #     for c in csv:
+
+
+def crop_data(data, time_interval, fs):
     # input - xlsx dataset file and time_interval(classic -0.5 sec) that is wanted to crop
     # output - dict of ('user_name':cropped Dataframe)
-    data = get_data(dataset_path)
-    cropped_data = data
 
     seg_size = int(round(time_interval * fs))  # segment size in samples
-    for key, df in list(data.items()):
-        rec_size = df.shape[0]      # record size
-        if rec_size < 20*fs :
-            del cropped_data[key]
-        else :
-            norm_df= -1 +2*(df-df.min())/(df.max()-df.min())  # normlize[-1 1]
-            signal = np.asarray(norm_df).transpose()[0]
-            signal_len = len(signal)
-            # Break signal into list of segments
-            segments = np.array([signal[x:x + seg_size] for x in np.arange(0, signal_len, seg_size)])
-            # Remove low energy segments:
-            energies = [(s**2).sum() / len(s) for s in segments]
-            thresh = min(energies)+0.25*(max(energies)-min(energies))
-            high_energy = (np.where(energies > thresh)[0])
-            segments2 = segments[high_energy]
-            # concatenate segments to signal:
-            cropped_signal = np.concatenate(segments2)
+    rec_size = data.shape[0]      # record size
+    if rec_size < 20 * fs:
+        raise ValueError('Recording was too short')
 
-            # trim silence with librosa
-            #trim = librosa.effects.trim(cropped_signal, top_db=0.9, 
-            #frame_length=int(round(seg_size/10)), hop_length=50)
-            #new_signal_trim = trim[0]
-            # plots!!
-            #i = 1
-            #plt.figure(i)
-            #plt.plot(signal)
-            #plt.figure(i+1)
-            #plt.plot(new_signal)
-            #plt.figure(i+2)
-            #plt.plot(cropped_signal)
-            #plt.show()
-            #i +=3
+    signal = np.asarray(data.iloc[:,0])
+    signal = -1 + 2 * (signal - signal.min())/(signal.max()-signal.min())
+    signal_len = len(signal)
 
-            ## check if cropped data is at least 5 sec and crop the first 5 sec
-            min_time = 5*fs
-            if len(cropped_signal) > min_time:
-                cropped_data[key] = pd.DataFrame(data=cropped_signal[0:min_time])
-            else:
-                del cropped_data[key]
+    # Break signal into list of segments
+    segments = [signal[x:x + seg_size] for x in np.arange(0, signal_len, seg_size)]
+    # Remove low energy segments:
+    energies = [(s**2).sum() / len(s) for s in segments]
+    thresh = min(energies)+0.25*(max(energies)-min(energies))
+    high_energy = (np.where(energies > thresh)[0])
+    segments2 = [segments[s] for s in range(len(segments)) if s in high_energy]
+    # concatenate segments to signal:
+    cropped_signal = np.concatenate(segments2)
 
-    return cropped_data
+    # trim silence with librosa
+    #trim = librosa.effects.trim(cropped_signal, top_db=0.9, 
+    #frame_length=int(round(seg_size/10)), hop_length=50)
+    #new_signal_trim = trim[0]
+    # plots!!
+    #i = 1
+    #plt.figure(i)
+    #plt.plot(signal)
+    #plt.figure(i+1)
+    #plt.plot(new_signal)
+    #plt.figure(i+2)
+    #plt.plot(cropped_signal)
+    #plt.show()
+    #i +=3
+
+    ## check if cropped data is at least 5 sec and crop the first 5 sec
+    min_time = 5*fs
+    if len(cropped_signal) < min_time:
+        raise ValueError('High energy segment was too short')
+    else:
+        return pd.DataFrame(data=cropped_signal[0:min_time])
 
     

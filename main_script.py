@@ -1,11 +1,13 @@
 from pre_processing import Pre_processing
-import Dataset
+from Dataset import loop_register_users, get_data
 import training
 import os
 import numpy as np
 
 
 def main():
+    if not os.path.exists('./data/database.xlsx'):
+        loop_register_users('./data/')
 
     perform_preprocessing()
     build_model()
