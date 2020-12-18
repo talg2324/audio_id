@@ -53,7 +53,6 @@ def loop_register_users(data_path):
     # with pd.ExcelWriter(database_path) as writer:
     #     for c in csv:
 
-
 def crop_data(data, time_interval, fs):
     # input - xlsx dataset file and time_interval(classic -0.5 sec) that is wanted to crop
     # output - dict of ('user_name':cropped Dataframe)

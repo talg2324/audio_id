@@ -68,14 +68,12 @@ class Pre_processing() :
     def mel_spect(self,x,power_2_db = False) :
 
         if power_2_db :
-            
             mel_spec =  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
             mel_spec = librosa.power_to_db(mel_spec, ref =np.max)
 
             return mel_spec
 
         else :
-
             return  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
     
     def mel_spec_deriv(self, x) :

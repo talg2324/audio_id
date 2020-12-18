@@ -1,7 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Conv2D, Dropout, MaxPooling2D, Flatten, Dense
 from keras.losses import categorical_crossentropy
-from keras.optimizers import adam
 
 def get_model(inp_shape, num_class):
     model = Sequential()
@@ -15,7 +14,7 @@ def get_model(inp_shape, num_class):
     model.add(Dropout(0.5))
     model.add(Dense(num_class, activate='softmax'))
 
-    model.compile(loss=categorical_crossentropy, optimizer=adam(), metrics=['accuracy'])
+    model.compile(loss=categorical_crossentropy, optimizer="Adam", metrics=['accuracy'])
     print(model.summary())
 
     return model
