@@ -1,15 +1,14 @@
-from pre_processing import Pre_processing
-from Dataset import loop_register_users, get_data
-import training
+# from pre_processing import Pre_processing
+# from Dataset import loop_register_users, get_data
+# import training
 import os
 import numpy as np
 import feat_analysis
 
 
 def main():
-
-    if not os.path.exists('./data/database.xlsx'):
-        loop_register_users('./data/')
+    # if not os.path.exists('./data/database.xlsx'):
+    #     loop_register_users('./data/')
 
     perform_preprocessing()
     build_model()
@@ -42,24 +41,31 @@ def perform_preprocessing():
                 path_to_feat = feature_space + key + '_' + str(col) + '.npy'
                 np.save(path_to_feat, features)
 
-def build_model():
+def build_model(analyze_feats=True):
     feat_space = './data/feats/'
 
     X = {}
     Y = {}
 
-    data = {}
-
     class_no = 0
+    stat_names =[
+            'spectral_centroid',
+            'spectral_bandwidth',
+            'rms',
+            'zero_crossing_rate']
 
     for spect_path in os.listdir(feat_space):
+        data = {}
         label, ind = spect_path.split('_')
 
         obj = np.load(feat_space+spect_path, allow_pickle=True)
         data['Spect'] = obj[0]
         data['dSdT'] = obj[1]
         data['dS2dT2'] = obj[2]
-        data['stats'] = obj[3]
+        stats = obj[3]
+
+        for i in range(len(stat_names)):
+            data[stat_names[i]] = stats[i,:]
 
         if label not in Y.keys():
             Y[label] = class_no
@@ -69,7 +75,9 @@ def build_model():
         this_class = Y[label]
         X[this_class].append(data)
 
-    feat_analysis.analyze_corr(X,Y)
+    if analyze_feats:
+        feat_analysis.analyze_feat_corr(X)
+        feat_analysis.analyze_label_corr(X,Y)
 
     X_train = []
     Y_train = []
