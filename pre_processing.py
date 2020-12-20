@@ -56,16 +56,16 @@ class Pre_processing() :
             all_mel_coeff = np.zeros([1+num_of_derivatives,_mel_coeff.shape[0],_mel_coeff.shape[-1]])
             all_mel_coeff[0,:] =_mel_coeff
 
-            for i in range(num_of_derivatives) :
+            for i in range(1,1+num_of_derivatives) :
 
-                all_mel_coeff[i,:,:] = librosa.feature.delta(_mel_coeff ,width = _mel_coeff.shape[-1],order =i+1 ,mode = 'interp')
+                all_mel_coeff[i,:,:] = librosa.feature.delta(_mel_coeff, order =i ,mode = 'interp')
     
             return all_mel_coeff
         else:
 
             return _mel_coeff
 
-    def mel_spect(self,x,power_2_db = False) :
+    def mel_spect(self,x, power_2_db = False) :
 
         if power_2_db :
             mel_spec =  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
@@ -74,11 +74,11 @@ class Pre_processing() :
             return mel_spec
 
         else :
-            return  librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
+            return librosa.feature.melspectrogram(x, sr=self.sr ,n_fft=self.n_fft, hop_length=self.hop_length, win_length=self.n_fft, window=self.window, center=True, pad_mode='reflect', power=2.0)
     
     def mel_spec_deriv(self, x) :
 
-        return librosa.feature.delta(x, width = x.shape[-1] ,order = 1,mode = 'interp')
+        return librosa.feature.delta(x, width = x.shape[-1] , axis=0, order = 1,mode = 'interp')
 
     def show_time_plot(self,x) :
 
@@ -100,22 +100,18 @@ class Pre_processing() :
         fig.colorbar(img, ax=_ax, format="%+2.f dB")
         plt.show()
 
-        
-
         return
     
     def my_dict(self,data) :
-
-        data = data.to_numpy().T
-        data = data.flatten()
-
-        mel = self.mel_spect(data,power_2_db= True)
+        mel = self.mel_spect(data, power_2_db=True)
         mel_dev_1 = self.mel_spec_deriv(mel)
         mel_dev_2 =self.mel_spec_deriv(mel_dev_1)
+        feats, stats = self.stats(data)
 
         features_dict = {
-            'statistic_features' : self.stats(data),
-            'stft' : self.stft(data),
+            'statistic_features' : stats,
+            'statistic_feature_names' : feats,
+            'stft' : np.log(np.abs(self.stft(data))),
             'mel_coeff' : self.mel_coeff(data,2),
             'mel_spec' : mel ,
             'mel_spec_dev_1' : mel_dev_1 ,
@@ -124,10 +120,9 @@ class Pre_processing() :
 
         return features_dict
     
+def demo():
 
-if __name__ == '__main__' :
-
-    data_file = './data/yaya.csv'
+    data_file = './data/arbel1.csv'
     signal = pd.read_csv(data_file)
     _sr = 8000
     _mel_coeff = 10
@@ -135,8 +130,10 @@ if __name__ == '__main__' :
             
     a = audio_model.my_dict(signal)
     audio_model.show_spec(a.get('mel_spec_dev_1') ,_x_axis = 'time', scale = 'log', spec_name = 'yariv')
+
+if __name__ == '__main__' :
     
-    print(1)
+    demo()
     
     
 

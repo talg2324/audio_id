@@ -29,9 +29,9 @@ def analyze_label_corr(X,Y):
     ylabel = 'xcorr'
     for f in feats:
         plt.subplot(1,no_feats,graph)
-        if graphs > 1:
+        if graph > 1:
             ylabel = ''
-        draw_corr_map(acorrs[f], xcorrs[f], 'acorr', ylabel, '\n'.join(f.split('_')))
+        draw_corr_map(acorrs[f], xcorrs[f], 'self-corr', ylabel, '\n'.join(f.split('_')))
         graph += 1
 
     plt.suptitle('Avg Correlation of Subject per Feature')
@@ -50,7 +50,7 @@ def analyze_feat_corr(X):
         for observ in X[label]:
             for f1 in feats:
                 for f2 in feats:
-                    xcorr = crosscorr(observ[f1], observ[f2])
+                    xcorr = crosscorr(minmaxnorm(observ[f1]), minmaxnorm(observ[f2]))
                     feat_corrs[f1+f2].append(xcorr)
 
     no_feats = len(feats)
@@ -113,6 +113,11 @@ def crosscorr(signal1, signal2):
 
     corr = stats.spearmanr(s1, s2)
     return corr[0]
+
+def minmaxnorm(x):
+    minval = x.min()
+    maxval = x.max()
+    return -1 + 2 * (x - minval) / (maxval - minval)
 
 def draw_corr_map(corr1, corr2, axis1, axis2, title):
     plt.scatter(corr1, corr2)

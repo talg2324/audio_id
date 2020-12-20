@@ -5,8 +5,8 @@ import os.path
 def get_data(path):
     # input - path of excel file! 
     # output - data as a dict of ('sheet_name':pd.Dataframe)
+    
     data = {}
-
     xls = pd.ExcelFile(path)
 
     for sheet_name in xls.sheet_names:
@@ -16,7 +16,6 @@ def get_data(path):
     return data
 
 def loop_register_users(data_path):
-
     all_files = os.listdir(data_path)
 
     csv = [f for f in all_files if f.endswith('.csv')]
@@ -28,7 +27,6 @@ def loop_register_users(data_path):
         user_name = user_name.rstrip('.csv')
 
         df = pd.read_csv(data_path+c)
-
         try:
             df = crop_data(df, time_interval=3, fs=8000)
             if user_name not in users.keys():
