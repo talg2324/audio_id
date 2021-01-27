@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np 
 import os.path
+from pre_processing import Pre_processing
+
 
 def get_data(path):
     # input - path of excel file! 
@@ -23,7 +25,7 @@ def loop_register_users(data_path):
     num_files = {}
 
     for c in csv:
-        user_name = ''.join([i for i in c if not i.isnumeric()])
+        user_name = ''.join([i for i in c if not i.isnumeric()] or not '_')
         user_name = user_name.rstrip('.csv')
 
         df = pd.read_csv(data_path+c)
@@ -90,10 +92,54 @@ def crop_data(data, time_interval, fs):
     #i +=3
 
     ## check if cropped data is at least 5 sec and crop the first 5 sec
-    min_time = 5*fs
+    min_time = 15*fs
     if len(cropped_signal) < min_time:
         raise ValueError('High energy segment was too short')
     else:
         return pd.DataFrame(data=cropped_signal[0:min_time])
 
     
+def perform_preprocessing(_data_path,best_features = None):
+
+    _feature_space = _data_path+'feats/'
+    # If haven't calculated features, do it
+    if not len(os.listdir(_feature_space)):
+        num_mel_coeffs = 40
+        fs = 8000
+        df = get_data(_data_path+'database.xlsx')
+        audio_model = Pre_processing(fs, num_mel_coeffs)
+
+        for key, val in df.items():
+            signals = df[key]
+
+            for col in range(1, signals.shape[1]): 
+                S = signals.iloc[1:,col].to_numpy()
+
+                features = audio_model.my_dict(S)
+                if best_features == None:   
+                    features = [
+                                features['statistic_features'],
+                                features['stft'],
+                                features['mfcc'],
+                                features['del-mfcc'],
+                                features['del-del-mfcc'],
+                                features['mel_spec'],
+                                features['mel_spec_dev_1'],
+                                features['mel_spec_dev_2']
+                            ]
+                    features = np.array([features], dtype=object)
+
+                    path_to_feat = _feature_space + key + '_' + str(col) + '.npy'
+                    np.save(path_to_feat, features)
+
+                else:
+                    best_features_data = list()
+                    feature_keys = features.keys()
+
+                    for feature in best_features:
+                            best_features_data.append(features[feature])                      
+
+                    features = np.array([best_features_data], dtype=object)
+
+                    path_to_feat = _feature_space + key + '_' + str(col) + '.npy'
+                    np.save(path_to_feat, features)

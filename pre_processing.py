@@ -78,7 +78,7 @@ class Pre_processing() :
     
     def mel_spec_deriv(self, x) :
 
-        return librosa.feature.delta(x, width = x.shape[-1] , axis=0, order = 1,mode = 'interp')
+        return librosa.feature.delta(x, order = 1)
 
     def show_time_plot(self,x) :
 
@@ -107,12 +107,17 @@ class Pre_processing() :
         mel_dev_1 = self.mel_spec_deriv(mel)
         mel_dev_2 =self.mel_spec_deriv(mel_dev_1)
         feats, stats = self.stats(data)
-
+        mfcc = self.mel_coeff(data,2)
+        mfcc_0 = mfcc[0,:,:]
+        mfcc_1 = mfcc[1,:,:]
+        mfcc_2 = mfcc[2,:,:]
         features_dict = {
             'statistic_features' : stats,
             'statistic_feature_names' : feats,
             'stft' : np.log(np.abs(self.stft(data))),
-            'mel_coeff' : self.mel_coeff(data,2),
+            'mfcc' : mfcc_0,
+            'del-mfcc' : mfcc_1,
+            'del-del-mfcc' : mfcc_2,
             'mel_spec' : mel ,
             'mel_spec_dev_1' : mel_dev_1 ,
             'mel_spec_dev_2' : mel_dev_2 
@@ -131,9 +136,9 @@ def demo():
     a = audio_model.my_dict(signal)
     audio_model.show_spec(a.get('mel_spec_dev_1') ,_x_axis = 'time', scale = 'log', spec_name = 'yariv')
 
-if __name__ == '__main__' :
+#if __name__ == '__main__' :
     
-    demo()
+    #demo()
     
     
 
