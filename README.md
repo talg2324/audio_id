@@ -1,5 +1,5 @@
 ## audio_id
-Course project on continuous audio signal monitoring including collection, processing, and authentication
+Course project on continuous audio signal monitoring including collection, processing, and authentication.  Deep Learning approach for audio-based user authentication.
 
 ## Project Flow
 
